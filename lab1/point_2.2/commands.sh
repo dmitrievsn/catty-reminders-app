@@ -21,5 +21,7 @@ localPort = 8181
 customDomains = ["app.$ID.$PROXY"]
 EOF3
 
+sudo systemctl start frpc
+
 echo "Адрес для проверки: webhook.$ID.$PROXY"
 wget -qO- https://gist.githubusercontent.com/prafdin/b9ff40c8bc6dc8c55ca7ac911e278ecc/raw/ea80e83e6a36220e2e9ccdaca8fde49ee888f2ab/main.py | python3
