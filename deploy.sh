@@ -19,8 +19,6 @@ printf 'DEPLOY_REF=%s\n' "$DEPLOY_REF" > "$ENV_FILE"
 
 echo "Using DEPLOY_REF=$DEPLOY_REF"
 
-sudo systemctl daemon-reload
 sudo systemctl restart catty-app.service
-sudo systemctl status catty-app.service --no-pager
 
 echo "✅ Catty deployed successfully"
