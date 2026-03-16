@@ -1,0 +1,13 @@
+[Unit]
+Description=DevOps Webhook Server
+After=network.target
+
+[Service]
+User=kali
+WorkingDirectory=/home/kali/catty-reminders-app
+ExecStart=/usr/bin/python3 /home/kali/catty-reminders-app/webhook-server.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
