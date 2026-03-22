@@ -23,21 +23,22 @@ jobs:
           ./test.sh
 
       - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  	uses: webfactory/ssh-agent@v0.7.0
+  	with:
+    	  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy on VM
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            cd /home/kali/catty-reminders-app
-            git fetch origin
-            git checkout lab2
-            git reset --hard origin/lab2
-            chmod +x deploy.sh test.sh
-            ./deploy.sh
+- name: Deploy on VM
+  uses: appleboy/ssh-action@v1.0.3
+  with:
+    host: ${{ secrets.SSH_HOST }}
+    username: ${{ secrets.SSH_USER }}
+    port: ${{ secrets.SSH_PORT }}
+    key: ${{ secrets.SSH_PRIVATE_KEY }}
+    script: |
+      set -e
+      cd /home/kali/catty-reminders-app
+      git fetch origin
+      git checkout lab2
+      git reset --hard origin/lab2
+      chmod +x deploy.sh test.sh
+      ./deploy.sh
