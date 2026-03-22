@@ -32,6 +32,6 @@ trap cleanup EXIT
 sleep 5
 
 export PYTHONPATH=.
-pytest -v
+pytest -v --junitxml=test_result.xml
 
 echo "🎉 Catty tests finished"
