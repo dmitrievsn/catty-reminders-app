@@ -22,7 +22,7 @@ jobs:
           chmod +x test.sh deploy.sh
           ./test.sh
 
-      - name: Deploy on VM
+      - name: Deploy release commit on VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -32,8 +32,7 @@ jobs:
           script: |
             set -e
             cd /home/kali/catty-reminders-app
-            git fetch origin
-            git checkout lab2
-            git reset --hard origin/lab2
+            git fetch --all --tags
+            git checkout --detach ${{ github.sha }}
             chmod +x deploy.sh test.sh
             ./deploy.sh
