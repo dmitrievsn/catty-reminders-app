@@ -31,6 +31,7 @@ trap cleanup EXIT
 
 sleep 5
 
+export PYTHONPATH=.
 pytest -q
 
 echo "🎉 Catty tests finished"
