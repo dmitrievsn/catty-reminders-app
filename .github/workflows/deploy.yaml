@@ -9,10 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Copy compose files to VM and deploy
+      - name: Deploy Docker Compose stack on VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -23,10 +20,14 @@ jobs:
             set -e
 
             cd /home/kali/catty-reminders-app
+            git fetch origin
+            git checkout lab4
+            git reset --hard origin/lab4
 
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             docker rm -f catty-app || true
 
+            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose down
             IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose pull
-            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose up -d
+            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose up -d --force-recreate --remove-orphans
