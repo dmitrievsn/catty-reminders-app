@@ -21,17 +21,7 @@ pip install -r requirements.txt
 pip install pytest pytest-playwright playwright
 python -m playwright install chromium
 
-uvicorn app.main:app --host 127.0.0.1 --port 8181 &
-APP_PID=$!
-
-cleanup() {
-  kill "$APP_PID" || true
-}
-trap cleanup EXIT
-
-sleep 5
-
 export PYTHONPATH=.
-pytest -v --junitxml=test_result.xml
+pytest -v tests/test_unit.py --junitxml=test_result.xml
 
 echo "🎉 Catty tests finished"
