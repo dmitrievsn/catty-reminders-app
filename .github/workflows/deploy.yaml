@@ -18,16 +18,15 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
+            
             cd /home/kali/catty-reminders-app
-            git fetch origin
-            git checkout lab4
-            git reset --hard origin/lab4
+            git fetch --all --tags
+            git checkout --detach ${{ github.sha }}
 
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-            docker rm -f catty-app || true
+  	    docker rm -f catty-app || true
 
-            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose down
-            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose pull
-            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose up -d --force-recreate --remove-orphans
+  	    IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose down
+  	    IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose pull
+  	    IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose up -d --force-recreate --remove-orphans
