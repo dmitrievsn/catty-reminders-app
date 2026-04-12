@@ -9,7 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy Docker container on VM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy compose files to VM and deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -19,15 +22,11 @@ jobs:
           script: |
             set -e
 
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            cd /home/kali/catty-reminders-app
 
-            docker pull ghcr.io/dmitrievsn/catty-reminders-app:${{ github.sha }}
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             docker rm -f catty-app || true
 
-            docker run -d \
-              --name catty-app \
-              --restart unless-stopped \
-              -p 8181:8181 \
-              -e DEPLOY_REF=${{ github.sha }} \
-              ghcr.io/dmitrievsn/catty-reminders-app:${{ github.sha }}
+            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose pull
+            IMAGE_TAG=${{ github.sha }} DEPLOY_REF=${{ github.sha }} docker compose up -d
