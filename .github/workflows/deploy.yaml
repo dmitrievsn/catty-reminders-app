@@ -9,20 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Run tests before deploy
-        run: |
-          chmod +x test.sh deploy.sh
-          ./test.sh
-
-      - name: Deploy release commit on VM
+      - name: Deploy Docker container on VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -31,8 +18,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            cd /home/kali/catty-reminders-app
-            git fetch --all --tags
-            git checkout --detach ${{ github.sha }}
-            chmod +x deploy.sh test.sh
-            ./deploy.sh
+
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+            docker pull ghcr.io/dmitrievsn/catty-reminders-app:${{ github.sha }}
+
+            docker rm -f catty-app || true
+
+            docker run -d \
+              --name catty-app \
+              --restart unless-stopped \
+              -p 8181:8181 \
+              -e DEPLOY_REF=${{ github.sha }} \
+              ghcr.io/dmitrievsn/catty-reminders-app:${{ github.sha }}
