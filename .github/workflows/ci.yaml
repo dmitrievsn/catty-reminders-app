@@ -46,7 +46,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/dmitrievsn/catty-reminders-app
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha
             type=ref,event=branch
@@ -57,7 +57,9 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            DEPLOY_REF=${{ github.sha }}
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ghcr.io/dmitrievsn/catty-reminders-app:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}

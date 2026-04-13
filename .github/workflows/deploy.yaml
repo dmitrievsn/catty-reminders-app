@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,16 +28,14 @@ jobs:
             git fetch --all --tags
             git checkout --detach ${{ github.sha }}
 
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             IMAGE_NAME=ghcr.io/${{ github.repository }} \
             IMAGE_TAG=${{ github.sha }} \
-            DEPLOY_REF=${{ github.sha }} \
             docker compose pull
 
             IMAGE_NAME=ghcr.io/${{ github.repository }} \
             IMAGE_TAG=${{ github.sha }} \
-            DEPLOY_REF=${{ github.sha }} \
             docker compose up -d --force-recreate --remove-orphans
 
             for i in $(seq 1 30); do

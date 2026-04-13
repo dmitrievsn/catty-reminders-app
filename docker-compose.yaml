@@ -19,8 +19,6 @@ services:
       - db
     ports:
       - "8181:8181"
-    environment:
-      DEPLOY_REF: ${DEPLOY_REF:-NA}
 
 volumes:
   catty-db-data:
