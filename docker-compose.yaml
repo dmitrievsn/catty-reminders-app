@@ -19,6 +19,8 @@ services:
       - db
     ports:
       - "8181:8181"
+    volumes:
+      - ./config.json:/app/config.json:ro
 
 volumes:
   catty-db-data:

@@ -1,6 +1,6 @@
-.venv
 .git
-.github
+.venv
 __pycache__
-*.pyc
-test_result.xml
+.pytest_cache
+.idea
+config.json
