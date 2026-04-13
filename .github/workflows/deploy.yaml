@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
           script: |
             set -e
 
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
 
@@ -29,5 +33,4 @@ jobs:
               --name catty-app \
               --restart unless-stopped \
               -p 8181:8181 \
-              -e DEPLOY_REF=${{ github.sha }} \
               ghcr.io/${{ github.repository }}:${{ github.sha }}
